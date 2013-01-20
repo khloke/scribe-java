@@ -59,6 +59,14 @@ public abstract class DefaultApi20 implements Api
    */
   public abstract String getAuthorizationUrl(OAuthConfig config);
 
+  public void setupPayload(OAuthRequest request, OAuthConfig config, Verifier verifier) {
+      request.addQuerystringParameter(OAuthConstants.CLIENT_ID, config.getApiKey());
+      request.addQuerystringParameter(OAuthConstants.CLIENT_SECRET, config.getApiSecret());
+      request.addQuerystringParameter(OAuthConstants.CODE, verifier.getValue());
+      request.addQuerystringParameter(OAuthConstants.REDIRECT_URI, config.getCallback());
+      if(config.hasScope()) request.addQuerystringParameter(OAuthConstants.SCOPE, config.getScope());
+  }
+
   /**
    * {@inheritDoc}
    */

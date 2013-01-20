@@ -1,5 +1,7 @@
 package org.scribe.oauth;
 
+import org.apache.commons.codec.EncoderException;
+import org.apache.commons.codec.net.URLCodec;
 import org.scribe.builder.api.*;
 import org.scribe.model.*;
 
@@ -28,11 +30,7 @@ public class OAuth20ServiceImpl implements OAuthService
   public Token getAccessToken(Token requestToken, Verifier verifier)
   {
     OAuthRequest request = new OAuthRequest(api.getAccessTokenVerb(), api.getAccessTokenEndpoint());
-    request.addQuerystringParameter(OAuthConstants.CLIENT_ID, config.getApiKey());
-    request.addQuerystringParameter(OAuthConstants.CLIENT_SECRET, config.getApiSecret());
-    request.addQuerystringParameter(OAuthConstants.CODE, verifier.getValue());
-    request.addQuerystringParameter(OAuthConstants.REDIRECT_URI, config.getCallback());
-    if(config.hasScope()) request.addQuerystringParameter(OAuthConstants.SCOPE, config.getScope());
+    api.setupPayload(request, config, verifier);
     Response response = request.send();
     return api.getAccessTokenExtractor().extract(response.getBody());
   }
